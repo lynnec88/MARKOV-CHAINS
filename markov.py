@@ -5,50 +5,65 @@ from random import choice
 
 def open_and_read_file(file_path):
     """Take file path as string; return text as string.
+
     Takes a string that is a file path, opens the file, and turns
     the file's contents as one string of text.
     """
 
-    file = open(file_path)
-    text = file.read()
-    file.close()
-    return text
+    # your code goes here
 
+    file = open(file_path) # need to use file_path variable instead of an undefined variable
+    text = file.read()
+    file.close() # need to return the text read from the file
+
+    return text
 
 def make_chains(text_string):
     """Take input text as string; return dictionary of Markov chains.
+
     A chain will be a key that consists of a tuple of (word1, word2)
     and the value would be a list of the word(s) that follow those two
     words in the input text.
+
     For example:
+
         >>> chains = make_chains('hi there mary hi there juanita')
+
     Each bigram (except the last) will be a key in chains:
+
         >>> sorted(chains.keys())
         [('hi', 'there'), ('mary', 'hi'), ('there', 'mary')]
+
     Each item in chains is a list of all possible following words:
+
         >>> chains[('hi', 'there')]
         ['mary', 'juanita']
+
         >>> chains[('there','juanita')]
         [None]
     """
-
     chains = {}
-    words = text_string.split() #previously I had this doing text_string.split(" ") which only splits on a space, but a null parameter will split on any whitespace including newline characters
-    #print(words)
-    for i in range(len(words)-2):
-        key_pair = (words[i], words[i+1])
-        #print(f"key pair is: {key_pair}")
-        value = words[i+2]
-        #print(f"value is: {value}")
-        if key_pair in chains:
-            #chains[key_pair] = []
-            chains[key_pair].append(value)
-            print("updating existing key pair")
-            print(f"chains is: {chains}")
-        else: 
-            chains[key_pair] = [value]
-            print("adding new key pair")
-            print(f"chains is: {chains}")
+
+    # your code goes here
+    words = text_string.split() # Split the text into a list of words
+
+    # Loop over each pair of adjacent words in the list
+    for i in range(len(words) -2):
+
+        # Get the current word pair and the next word
+        key_pair = (words[i], words[i + 1])
+        value = words[i + 2]
+
+        # If the current word pair is not
+        # already a key in the chains dictionary, add it
+        if key_pair not in chains:
+            chains[key_pair] = []
+
+        # Add the next word to the
+        # list of values for the current word pair key
+        chains[key_pair].append(value)
+
+    # Return the dictionary of chains
     return chains
 
 
@@ -57,9 +72,17 @@ def make_text(chains):
 
     words = []
 
-    # your code goes here
-    
+    # Get a random key to start with
+    key = choice(list(chains.keys()))
 
+    # your code goes here
+    # Loop until the next word is None (i.e. the end of the chain)
+    word = choice(chains[key])
+    while word is not None:
+        key = (key[1], word)
+        words.append(word)
+        word = choice(chains.get(key, [None]))
+    
     return ' '.join(words)
 
 
